@@ -5,17 +5,18 @@ namespace Services
 {
     public class UsersService : IUsersService
     {
+        IUsersRepository repository;
+        IPasswordsService passwordsService;
+
         public UsersService(IUsersRepository repository, IPasswordsService passwordsService)
         {
             this.repository = repository;
             this.passwordsService = passwordsService;
         }
-        IUsersRepository repository;
-        IPasswordsService passwordsService;
 
         public async Task<IEnumerable<User>> GetUsers()
         {
-            return await repository.GetUsers();//ToList();
+            return await repository.GetUsers();
         }
 
         public async Task<User?> GetUserById(int id)
@@ -38,7 +39,7 @@ namespace Services
         {
             int Level = passwordsService.passwordValidation(user.Password);
             if (Level < 3)
-                throw new("Password is too weak");
+                throw new InvalidOperationException("Password is too weak");
             await repository.UpdateUser(id, user);
         }
     }

@@ -22,41 +22,41 @@ namespace WebApiShop.Controllers
 
         // GET: api/<UsersController>
         [HttpGet]
-        public async Task<IEnumerable<User>> Get()
+        public async Task<ActionResult<IEnumerable<User>>> Get()
         {
             
-            return await _usersService.GetUsers();
+            return Ok(await _usersService.GetUsers());
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> Get(int id)
+        public async Task<ActionResult<User>> GetById(int id)
         {
             User? user = await _usersService.GetUserById(id);
             if (user != null)
             {
                 return Ok(user);
             }
-            return NoContent();
+            return NotFound();
         }
 
         // POST api/<UsersController>
         [HttpPost]
         public async Task<ActionResult<User>> Post([FromBody] User user)
         {
-            User? _user =  await _usersService.CreateUser(user);
-            if (user == null)
-                return BadRequest();
-            return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
+            User? _user = await _usersService.CreateUser(user);
+            if (_user == null)
+                return BadRequest("Password is not strong enough");
+            return CreatedAtAction(nameof(GetById), new { id = _user.Id }, _user);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Post1([FromBody] User loggedUser)
+        public async Task<ActionResult<User>> Login([FromBody] User loggedUser)
         {
             User? user = await _usersService.Login(loggedUser);
             if (user != null)
-                return CreatedAtAction(nameof(Get), new { user.Id }, user);
-            return NoContent();
+                return Ok(user);
+            return Unauthorized("Invalid username or password");
         }
 
         // PUT api/<UsersController>/5
