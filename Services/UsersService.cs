@@ -1,46 +1,57 @@
 ﻿using Repository;
-using System.Net.Security;
+using AutoMapper;
+using DTOs;
 using Entities;
+using System.Collections.Generic;
+using System.Net.Security;
 namespace Services
 {
     public class UsersService : IUsersService
     {
-        IUsersRepository repository;
-        IPasswordsService passwordsService;
-
-        public UsersService(IUsersRepository repository, IPasswordsService passwordsService)
+        public UsersService(IUsersRepository repository, IPasswordsService passwordsService, IMapper mapper)
         {
-            this.repository = repository;
+            this._repository = repository;
             this.passwordsService = passwordsService;
+            _mapper = mapper;
         }
+        IUsersRepository _repository;
+        IPasswordsService passwordsService;
+        IMapper _mapper;
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<IEnumerable<UserDTO>> GetUsers()
         {
-            return await repository.GetUsers();
+            IEnumerable<User> users = await _repository.GetUsers();
+            return  _mapper.Map<IEnumerable<User>,IEnumerable<UserDTO>>(users);
         }
 
-        public async Task<User?> GetUserById(int id)
+        public async Task<UserDTO?> GetUserById(int id)
         {
-            return await repository.GetUserById(id);
+            User? user = await _repository.GetUserById(id);
+            return _mapper.Map<User, UserDTO>(user);
         }
 
-        public async Task<User?> CreateUser(User user)
+        public async Task<UserDTO?> CreateUser(UserDTO user)
         {
             int Level = passwordsService.passwordValidation(user.Password);
             if (Level < 3)
                 return null;
-            return await repository.CreateUser(user);
+            User user1 = _mapper.Map<UserDTO, User>(user);
+            user1 = await _repository.CreateUser(user1);
+            return _mapper.Map<User, UserDTO>(user1);
         }
-        public async Task<User?> Login(User loggedUser)
+        public async Task<UserDTO?> Login(LoginUserDTO loggedUser)
         {
-            return await repository.Login(loggedUser);
+            User? user = _mapper.Map<LoginUserDTO, User>(loggedUser);
+            user = await _repository.Login(user);
+            return _mapper.Map<User,UserDTO>(user);
         }
-        public async Task UpdateUser(int id, User user)
+        public async Task UpdateUser(int id, UserDTO user)
         {
             int Level = passwordsService.passwordValidation(user.Password);
             if (Level < 3)
-                throw new InvalidOperationException("Password is too weak");
-            await repository.UpdateUser(id, user);
+                throw new("Password is too weak");
+            User user1 = _mapper.Map<UserDTO,User>(user);
+            await _repository.UpdateUser(id, user1);
         }
     }
 }

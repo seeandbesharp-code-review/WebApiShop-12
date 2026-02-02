@@ -13,15 +13,105 @@ public partial class WebApiShopContext : DbContext
     {
     }
 
+    public virtual DbSet<Category> Categories { get; set; }
+
+    public virtual DbSet<Order> Orders { get; set; }
+
+    public virtual DbSet<OrderItem> OrderItems { get; set; }
+
+    public virtual DbSet<Product> Products { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.CategoryId).HasName("PK__CATEGORI__E7DA297CA1143AB8");
+
+            entity.ToTable("CATEGORIES");
+
+            entity.Property(e => e.CategoryId).HasColumnName("CATEGORY_ID");
+            entity.Property(e => e.CategoryName)
+                .IsRequired()
+                .IsUnicode(false)
+                .HasColumnName("CATEGORY_NAME");
+        });
+
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.OrderId).HasName("PK__ORDERS__460A9464C168D539");
+
+            entity.ToTable("ORDERS");
+
+            entity.Property(e => e.OrderId).HasColumnName("ORDER_ID");
+            entity.Property(e => e.OrderDate).HasColumnName("ORDER_DATE");
+            entity.Property(e => e.OrderSum)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("ORDER_SUM");
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ORDERS__USER_ID__4CA06362");
+        });
+
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.HasKey(e => e.OrderItemId).HasName("PK__ORDER_IT__E15C43166862E565");
+
+            entity.ToTable("ORDER_ITEMS");
+
+            entity.Property(e => e.OrderItemId).HasColumnName("ORDER_ITEM_ID");
+            entity.Property(e => e.OrderId).HasColumnName("ORDER_ID");
+            entity.Property(e => e.ProductId).HasColumnName("PRODUCT_ID");
+            entity.Property(e => e.Quantity).HasColumnName("QUANTITY");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderItems)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ORDER_ITE__ORDER__5070F446");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.OrderItems)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ORDER_ITE__PRODU__4F7CD00D");
+        });
+
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasKey(e => e.ProductId).HasName("PK__PRODUCTS__52B417639DBF3666");
+
+            entity.ToTable("PRODUCTS");
+
+            entity.Property(e => e.ProductId).HasColumnName("PRODUCT_ID");
+            entity.Property(e => e.CategoryId).HasColumnName("CATEGORY_ID");
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .IsUnicode(false)
+                .HasColumnName("DESCRIPTION");
+            entity.Property(e => e.Price)
+                .HasColumnType("decimal(5, 2)")
+                .HasColumnName("PRICE");
+            entity.Property(e => e.ProductName)
+                .IsRequired()
+                .IsUnicode(false)
+                .HasColumnName("PRODUCT_NAME");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Products)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__PRODUCTS__CATEGO__49C3F6B7");
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC2757CAACB0");
+            entity.HasKey(e => e.UserId).HasName("PK__USERS__F3BEEBFFBE2FFE18");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.ToTable("USERS");
+
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
             entity.Property(e => e.FirstName)
                 .IsRequired()
                 .IsUnicode(false)

@@ -20,19 +20,19 @@ title.textContent = title.textContent + user.firstName;
 
 
 async function Update() {
-    Id = user.id;
+    UserId = user.userId;
     UserName = document.querySelector('#username').value;
     Password = document.querySelector('#password').value;
     FirstName = document.querySelector('#FirstName').value;
     LastName = document.querySelector('#LastName').value;
     const data = {
-        Id,
+        UserId,
         UserName,
         Password,
         FirstName,
         LastName
     };  
-    const response = await fetch( `../api/Users/${user.id}`, {
+    const response = await fetch( `../api/Users/${user.userId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

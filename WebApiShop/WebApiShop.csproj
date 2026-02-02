@@ -5,13 +5,17 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
-    <EditorConfigFiles Remove="F:\webapi\WebApiShop\WebApiShop\.editorconfig" />
+    <None Include="F:\webapi\WebApiShop\WebApiShop\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="F:\webapi\WebApiShop\WebApiShop\.editorconfig" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="F:\webapi\WebApiShop\WebApiShop\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>

@@ -39,9 +39,7 @@ async function login() {
     Password = document.querySelector('#lpassword').value;
     const data = {
         UserName,
-        Password,
-        FirstName:".",
-        LastName:"."
+        Password
     };  
 
     const response = await fetch("api/Users/login", {

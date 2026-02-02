@@ -4,6 +4,7 @@ using System.Text.Json;
 using Services;
 using Entities;
 using System.Threading.Tasks;
+using DTOs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,46 +23,46 @@ namespace WebApiShop.Controllers
 
         // GET: api/<UsersController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> Get()
+        public async Task<IEnumerable<UserDTO>> Get()
         {
             
-            return Ok(await _usersService.GetUsers());
+            return await _usersService.GetUsers();
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetById(int id)
+        public async Task<ActionResult<UserDTO>> Get(int id)
         {
-            User? user = await _usersService.GetUserById(id);
+            UserDTO? user = await _usersService.GetUserById(id);
             if (user != null)
             {
                 return Ok(user);
             }
-            return NotFound();
+            return NoContent();
         }
 
         // POST api/<UsersController>
         [HttpPost]
-        public async Task<ActionResult<User>> Post([FromBody] User user)
+        public async Task<ActionResult<UserDTO>> Post([FromBody] UserDTO user)
         {
-            User? _user = await _usersService.CreateUser(user);
+            UserDTO? _user =  await _usersService.CreateUser(user);
             if (_user == null)
-                return BadRequest("Password is not strong enough");
-            return CreatedAtAction(nameof(GetById), new { id = _user.Id }, _user);
+                return BadRequest();
+            return CreatedAtAction(nameof(Get), new { id = user.UserId }, user);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login([FromBody] User loggedUser)
+        public async Task<ActionResult<UserDTO>> Post1([FromBody] LoginUserDTO loggedUser)
         {
-            User? user = await _usersService.Login(loggedUser);
+            UserDTO? user = await _usersService.Login(loggedUser);
             if (user != null)
-                return Ok(user);
-            return Unauthorized("Invalid username or password");
+                return CreatedAtAction(nameof(Get), new { user.UserId }, user);
+            return NoContent();
         }
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] User user)
+        public async Task<ActionResult> Put(int id, [FromBody] UserDTO user)
         {
             try 
             {

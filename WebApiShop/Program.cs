@@ -12,9 +12,18 @@ builder.Services.AddDbContext<WebApiShopContext>(option => option.UseSqlServer
 ("Data Source=srv2\\pupils;Initial Catalog=WebApiShop;Integrated Security=True;Trust Server Certificate=True; Pooling = False"));
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // Configure the HTTP request pipeline.
 

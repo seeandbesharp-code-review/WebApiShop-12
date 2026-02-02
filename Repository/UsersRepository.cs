@@ -1,6 +1,5 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 
 
 namespace Repository
@@ -40,6 +39,6 @@ namespace Repository
             _webApiShopContext.Users.Update(loggedUser);
             await _webApiShopContext.SaveChangesAsync();
         }
-        
+
     }
 }
