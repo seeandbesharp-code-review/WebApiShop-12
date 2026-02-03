@@ -8,15 +8,16 @@ namespace Services
 {
     public class UsersService : IUsersService
     {
+        private readonly IUsersRepository _repository;
+        private readonly IPasswordsService _passwordsService;
+        private readonly IMapper _mapper;
+
         public UsersService(IUsersRepository repository, IPasswordsService passwordsService, IMapper mapper)
         {
-            this._repository = repository;
-            this.passwordsService = passwordsService;
+            _repository = repository;
+            _passwordsService = passwordsService;
             _mapper = mapper;
         }
-        IUsersRepository _repository;
-        IPasswordsService passwordsService;
-        IMapper _mapper;
 
         public async Task<IEnumerable<UserDTO>> GetUsers()
         {
@@ -32,7 +33,7 @@ namespace Services
 
         public async Task<UserDTO?> CreateUser(UserDTO user)
         {
-            int Level = passwordsService.passwordValidation(user.Password);
+            int Level = _passwordsService.passwordValidation(user.Password);
             if (Level < 3)
                 return null;
             User user1 = _mapper.Map<UserDTO, User>(user);
@@ -47,7 +48,7 @@ namespace Services
         }
         public async Task UpdateUser(int id, UserDTO user)
         {
-            int Level = passwordsService.passwordValidation(user.Password);
+            int Level = _passwordsService.passwordValidation(user.Password);
             if (Level < 3)
                 throw new("Password is too weak");
             User user1 = _mapper.Map<UserDTO,User>(user);

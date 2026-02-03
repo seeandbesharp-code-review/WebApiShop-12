@@ -15,10 +15,10 @@ namespace WebApiShop.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        ICategoriesService _categoriesService;
+        private readonly ICategoriesService _categoriesService;
         public CategoriesController(ICategoriesService categoriesService)
         {
-            this._categoriesService = categoriesService;
+            _categoriesService = categoriesService;
         }
 
         // GET: api/<CategorysController>

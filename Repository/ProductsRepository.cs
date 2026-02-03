@@ -7,7 +7,7 @@ namespace Repository
 {
     public class ProductsRepository : IProductsRepository
     {
-        WebApiShopContext _webApiShopContext;
+        private readonly WebApiShopContext _webApiShopContext;
 
         public ProductsRepository(WebApiShopContext webApiShopContext)
         {

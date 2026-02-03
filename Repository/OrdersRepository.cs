@@ -6,7 +6,7 @@ namespace Repository
 {
     public class OrdersRepository : IOrdersRepository
     {
-        WebApiShopContext _webApiShopContext;
+        private readonly WebApiShopContext _webApiShopContext;
 
         public OrdersRepository(WebApiShopContext webApiShopContext)
         {

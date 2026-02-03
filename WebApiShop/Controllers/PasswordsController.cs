@@ -10,11 +10,11 @@ namespace WebApiShop.Controllers
     [ApiController]
     public class PasswordsController : ControllerBase
     {
-        IPasswordsService _passwordsService;
+        private readonly IPasswordsService _passwordsService;
 
         public PasswordsController(IPasswordsService passwordsService)
         {
-            this._passwordsService = passwordsService;
+            _passwordsService = passwordsService;
         }
 
         // POST api/<PasswordController>

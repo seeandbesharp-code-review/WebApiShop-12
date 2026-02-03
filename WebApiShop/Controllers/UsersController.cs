@@ -15,10 +15,10 @@ namespace WebApiShop.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        IUsersService _usersService;
+        private readonly IUsersService _usersService;
         public UsersController(IUsersService usersService)
         {
-            this._usersService = usersService;
+            _usersService = usersService;
         }
 
         // GET: api/<UsersController>
@@ -52,12 +52,12 @@ namespace WebApiShop.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> Post1([FromBody] LoginUserDTO loggedUser)
+        public async Task<ActionResult<UserDTO>> Login([FromBody] LoginUserDTO loggedUser)
         {
             UserDTO? user = await _usersService.Login(loggedUser);
             if (user != null)
-                return CreatedAtAction(nameof(Get), new { user.UserId }, user);
-            return NoContent();
+                return Ok(user);
+            return Unauthorized();
         }
 
         // PUT api/<UsersController>/5
@@ -75,10 +75,6 @@ namespace WebApiShop.Controllers
             }
         }
 
-        // DELETE api/<UsersController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

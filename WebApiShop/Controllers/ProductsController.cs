@@ -15,10 +15,10 @@ namespace WebApiShop.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        IProductsService _productsService;
+        private readonly IProductsService _productsService;
         public ProductsController(IProductsService productsService)
         {
-            this._productsService = productsService;
+            _productsService = productsService;
         }
 
         // GET: api/<ProductsController>
@@ -33,19 +33,19 @@ namespace WebApiShop.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDTO>> Get(int id)
         {
-            ProductDTO? Product = await _productsService.GetProductById(id);
-            return Ok(Product);
+            ProductDTO? product = await _productsService.GetProductById(id);
+            return Ok(product);
             
         }
 
         // POST api/<ProductsController>
         [HttpPost]
-        public async Task<ActionResult<ProductDTO>> Post([FromBody] ProductDTO Product)
+        public async Task<ActionResult<ProductDTO>> Post([FromBody] ProductDTO product)
         {
-            ProductDTO? _Product =  await _productsService.CreateProduct(Product);
-            if (_Product == null)
+            ProductDTO? createdProduct =  await _productsService.CreateProduct(product);
+            if (createdProduct == null)
                 return BadRequest();
-            return CreatedAtAction(nameof(Get), new { id = Product.ProductId }, Product);
+            return CreatedAtAction(nameof(Get), new { id = product.ProductId }, product);
         }
 
         // PUT api/<ProductsController>/5
@@ -63,10 +63,6 @@ namespace WebApiShop.Controllers
             }
         }
 
-        // DELETE api/<ProductsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

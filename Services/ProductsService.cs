@@ -8,13 +8,14 @@ namespace Services
 {
     public class ProductsService : IProductsService
     {
+        private readonly IProductsRepository _repository;
+        private readonly IMapper _mapper;
+
         public ProductsService(IProductsRepository repository, IMapper mapper)
         {
-            this._repository = repository;
+            _repository = repository;
             _mapper = mapper;
         }
-        IProductsRepository _repository;
-        IMapper _mapper;
 
         public async Task<IEnumerable<ProductDTO>> GetProducts(int[]? categoryId, decimal maxPrice, decimal minPrice)
         {
@@ -28,18 +29,18 @@ namespace Services
             return _mapper.Map<Product, ProductDTO>(product);
         }
 
-        public async Task<ProductDTO?> CreateProduct(ProductDTO Product)
+        public async Task<ProductDTO?> CreateProduct(ProductDTO product)
         {
             
-            Product product1 = _mapper.Map<ProductDTO, Product>(Product);
+            Product product1 = _mapper.Map<ProductDTO, Product>(product);
             product1 = await _repository.CreateProduct(product1);
             return _mapper.Map<Product, ProductDTO>(product1);
         }
         
-        public async Task UpdateProduct(int id, ProductDTO Product)
+        public async Task UpdateProduct(int id, ProductDTO product)
         {
-            Product Product1 = _mapper.Map<ProductDTO,Product>(Product);
-            await _repository.UpdateProduct(id, Product1);
+            Product productEntity = _mapper.Map<ProductDTO,Product>(product);
+            await _repository.UpdateProduct(id, productEntity);
         }
     }
 }

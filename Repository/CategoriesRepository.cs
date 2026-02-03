@@ -6,7 +6,7 @@ namespace Repository
 {
     public class CategoriesRepository : ICategoriesRepository
     {
-        WebApiShopContext _webApiShopContext;
+        private readonly WebApiShopContext _webApiShopContext;
 
         public CategoriesRepository(WebApiShopContext webApiShopContext)
         {

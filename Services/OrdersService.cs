@@ -8,18 +8,19 @@ namespace Services
 {
     public class OrdersService : IOrdersService
     {
+        private readonly IOrdersRepository _repository;
+        private readonly IMapper _mapper;
+
         public OrdersService(IOrdersRepository repository, IMapper mapper)
         {
-            this._repository = repository;
+            _repository = repository;
             _mapper = mapper;
         }
-        IOrdersRepository _repository;
-        IMapper _mapper;
 
         public async Task<IEnumerable<OrderDTO>> GetOrders()
         {
-            IEnumerable<Order> Orders = await _repository.GetOrders();
-            return  _mapper.Map<IEnumerable<Order>,IEnumerable<OrderDTO>>(Orders);
+            IEnumerable<Order> orders = await _repository.GetOrders();
+            return  _mapper.Map<IEnumerable<Order>,IEnumerable<OrderDTO>>(orders);
         }
 
         public async Task<OrderDTO> GetOrderById(int id)
