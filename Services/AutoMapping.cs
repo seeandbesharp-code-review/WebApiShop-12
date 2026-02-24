@@ -16,11 +16,11 @@ namespace Services
         {
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<Product, ProductDTO>().ReverseMap();
+            CreateMap<ProductDTO, Product>().ReverseMap().ForCtorParam("CategoryName", opt => opt.MapFrom(src => src.Category.CategoryName));
             CreateMap<User, LoginUserDTO>().ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<Category, CategoryDTO>().ReverseMap();
             CreateMap<OrderItem, OrderItemDTO>().ReverseMap();
-
 
         }
     }

@@ -18,7 +18,10 @@ namespace Repository
             return await _webApiShopContext.Categories.ToListAsync();
         }
 
-        
+        public async Task<Category?> GetCategoryById(int id)
+        {
+            return await _webApiShopContext.Categories.FindAsync(id);
+        }
 
         public async Task<Category> CreateCategory(Category category)
         {

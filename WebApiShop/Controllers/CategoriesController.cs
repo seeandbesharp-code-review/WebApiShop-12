@@ -29,6 +29,17 @@ namespace WebApiShop.Controllers
             return await _categoriesService.GetCategories();
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CategoryDTO>> Get(int id)
+        {
+            CategoryDTO? category = await _categoriesService.GetCategoryById(id);
+            if (category != null)
+            {
+                return Ok(category);
+            }
+            return NoContent();
+        }
+
         // POST api/<CategorysController>
         [HttpPost]
         public async Task<ActionResult<CategoryDTO>> Post([FromBody] CategoryDTO category)

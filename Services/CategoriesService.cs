@@ -22,7 +22,11 @@ namespace Services
             return  _mapper.Map<IEnumerable<Category>,IEnumerable<CategoryDTO>>(categories);
         }
 
-        
+        public async Task<CategoryDTO?> GetCategoryById(int id)
+        {
+            Category? category = await _repository.GetCategoryById(id);
+            return _mapper.Map<Category, CategoryDTO>(category);
+        }
 
         public async Task<CategoryDTO?> CreateCategory(CategoryDTO category)
         {
