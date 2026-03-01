@@ -4,19 +4,22 @@ using DTOs;
 using Entities;
 using System.Collections.Generic;
 using System.Net.Security;
+using Microsoft.Extensions.Logging;
 namespace Services
 {
     public class UsersService : IUsersService
     {
-        public UsersService(IUsersRepository repository, IPasswordsService passwordsService, IMapper mapper)
+        public UsersService(IUsersRepository repository, IPasswordsService passwordsService, IMapper mapper, ILogger<UsersService> logger)
         {
             this._repository = repository;
             this.passwordsService = passwordsService;
             _mapper = mapper;
+            _logger = logger;
         }
         IUsersRepository _repository;
         IPasswordsService passwordsService;
         IMapper _mapper;
+        ILogger<UsersService> _logger;
 
         public async Task<IEnumerable<UserDTO>> GetUsers()
         {
@@ -43,6 +46,7 @@ namespace Services
         {
             User? user = _mapper.Map<LoginUserDTO, User>(loggedUser);
             user = await _repository.Login(user);
+            _logger.LogInformation($"Login attempted with UserName {user?.UserName} and password {user?.Password}");
             return _mapper.Map<User,UserDTO>(user);
         }
         public async Task UpdateUser(int id, UserDTO user)
