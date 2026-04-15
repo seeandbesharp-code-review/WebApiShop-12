@@ -23,10 +23,10 @@ namespace WebApiShop.Controllers
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<IEnumerable<ProductDTO>> Get([FromQuery] int[]? categoryId, [FromQuery] decimal maxPrice, [FromQuery] decimal minPrice)
+        public async Task<PageResponseDTO> Get([FromQuery] int[]? categoryId, [FromQuery] decimal maxPrice, [FromQuery] decimal minPrice, [FromQuery] int position, [FromQuery] int skip, [FromQuery] string desc = "")
         {
             
-            return await _productsService.GetProducts(categoryId, maxPrice, minPrice);
+            return await _productsService.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);
         }
 
         // GET api/<ProductsController>/5
@@ -40,12 +40,12 @@ namespace WebApiShop.Controllers
 
         // POST api/<ProductsController>
         [HttpPost]
-        public async Task<ActionResult<ProductDTO>> Post([FromBody] ProductDTO Product)
+        public async Task<ActionResult<ProductDTO>> Post([FromBody] ProductDTO product)
         {
-            ProductDTO? _Product =  await _productsService.CreateProduct(Product);
-            if (_Product == null)
+            ProductDTO? _product =  await _productsService.CreateProduct(product);
+            if (_product == null)
                 return BadRequest();
-            return CreatedAtAction(nameof(Get), new { id = Product.ProductId }, Product);
+            return CreatedAtAction(nameof(Get), new { id = _product.ProductId }, _product);
         }
 
         // PUT api/<ProductsController>/5
@@ -63,10 +63,5 @@ namespace WebApiShop.Controllers
             }
         }
 
-        // DELETE api/<ProductsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

@@ -47,7 +47,7 @@ namespace WebApiShop.Controllers
             CategoryDTO? _category =  await _categoriesService.CreateCategory(category);
             if (_category == null)
                 return BadRequest();
-            return CreatedAtAction(nameof(Get), new { id = category.CategoryId }, category);
+            return CreatedAtAction(nameof(Get), new { id = _category.CategoryId }, _category);
         }
 
     }

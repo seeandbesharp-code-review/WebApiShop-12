@@ -14,7 +14,7 @@ namespace Repository
             _webApiShopContext = webApiShopContext;
         }
 
-        public async Task<IEnumerable<Product>> GetProducts(int[]? categoryId, decimal maxPrice, decimal minPrice)
+        public async Task<(IEnumerable<Product>,int)> GetProducts(int[]? categoryId, decimal maxPrice, decimal minPrice, string desc, int position, int skip)
         {
             var query = _webApiShopContext.Products.Where(product=>
             (minPrice == 0)? (true) : (product.Price >= minPrice) &&
@@ -23,8 +23,9 @@ namespace Repository
             .OrderBy(product=> product.Price);
 
             var total = await query.CountAsync();
-
-            return await query.ToListAsync();
+            var products = await query.Skip((position-1)*skip)
+                .Take(skip).Include(product=> product.Category).ToListAsync();
+            return (products, total);
         }
 
         public async Task<Product?> GetProductById(int id)
