@@ -23,7 +23,7 @@ namespace WebApiShop.Controllers
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<PageResponseDTO> Get([FromQuery] int[]? categoryId, [FromQuery] decimal maxPrice, [FromQuery] decimal minPrice, [FromQuery] int position, [FromQuery] int skip, [FromQuery] string desc = "")
+        public async Task<PageResponseDTO> Get([FromQuery] int[] categoryId, [FromQuery] decimal maxPrice, [FromQuery] decimal minPrice, [FromQuery] int position, [FromQuery] int skip, [FromQuery] string desc = "")
         {
             
             return await _productsService.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);

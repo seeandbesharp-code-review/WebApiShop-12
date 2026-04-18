@@ -20,7 +20,13 @@ namespace Repository
 
         public async Task<Order?> GetOrderById(int id)
         {
-            return await _webApiShopContext.Orders.FindAsync(id);
+            Order? order = await _webApiShopContext.Orders.FindAsync(id);
+            if (order != null)
+            {
+                order.OrderItems = await _webApiShopContext.OrderItems.ToListAsync();
+                order.OrderItems = order.OrderItems.Where(x => x.OrderId == order.OrderId).ToList();
+            }
+            return order;
         }
 
         public async Task<Order> CreateOrder(Order order)

@@ -14,10 +14,11 @@ namespace Repository
             _webApiShopContext = webApiShopContext;
         }
 
-        public async Task<(IEnumerable<Product>,int)> GetProducts(int[]? categoryId, decimal maxPrice, decimal minPrice, string desc, int position, int skip)
+        public async Task<(IEnumerable<Product>,int)> GetProducts(int[] categoryId, decimal maxPrice, decimal minPrice, string desc, int position, int skip)
         {
             var query = _webApiShopContext.Products.Where(product=>
-            (minPrice == 0)? (true) : (product.Price >= minPrice) &&
+            (desc == "" ? (true) : (product.Description.Contains(desc))) &&
+            (minPrice == 0) ? (true) : (product.Price >= minPrice) &&
             (maxPrice == 0) ? (true) : (product.Price <= maxPrice) &&
             (categoryId.Length == 0) ? (true) : (categoryId.Contains(product.ProductId)))
             .OrderBy(product=> product.Price);

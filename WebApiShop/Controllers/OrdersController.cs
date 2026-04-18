@@ -45,7 +45,7 @@ namespace WebApiShop.Controllers
             OrderDTO _order =  await _ordersService.CreateOrder(order);
             if (_order == null)
                 return BadRequest();
-            return CreatedAtAction(nameof(Get), new { id = order.OrderId }, order);
+            return CreatedAtAction(nameof(Get), new { id = _order.OrderId }, _order);
         }
 
         

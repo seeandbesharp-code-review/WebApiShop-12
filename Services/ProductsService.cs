@@ -16,7 +16,7 @@ namespace Services
         IProductsRepository _repository;
         IMapper _mapper;
 
-        public async Task<PageResponseDTO> GetProducts(int[]? categoryId, decimal maxPrice, decimal minPrice, string desc, int position, int skip)
+        public async Task<PageResponseDTO> GetProducts(int[] categoryId, decimal maxPrice, decimal minPrice, string desc, int position, int skip)
         {
             var (products, total) = await _repository.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);
 

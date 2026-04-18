@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NLog.Web;
+using PresidentsApp.Middlewares;
 using Repository;
 using Services;
+using WebApiShop.MiddleWare;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,10 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
+builder.Services.AddScoped<IRatingRepository, RatingRepository>();
+builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Host.UseNLog();
-builder.Services.AddDbContext<WebApiShopContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("School")));
+builder.Services.AddDbContext<WebApiShopContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("Home")));
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -35,6 +39,10 @@ if (app.Environment.IsDevelopment())
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+
+app.UseRatingMiddleware();
+
+app.UseErrorHandlingMiddleware();
 
 app.UseStaticFiles();
 
