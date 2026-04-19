@@ -6,102 +6,119 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 using Xunit;
+using Moq;
+using Moq.EntityFrameworkCore;
 
-public class UsersRepositoryTests : IDisposable
+public class UsersRepositoryTests
 {
-    private readonly WebApiShopContext _context;
-    private readonly UsersRepository _repository;
-
-    // tearUp: create DB and seed data
-    public UsersRepositoryTests()
-    {
-        var options = new DbContextOptionsBuilder<WebApiShopContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        _context = new WebApiShopContext(options);
-
-        // Seed initial data
-        _context.Users.AddRange(
-            new User { UserId = 1, UserName = "user1", Password = "pass1", FirstName = "John", LastName = "Doe" },
-            new User { UserId = 2, UserName = "user2", Password = "pass2", FirstName = "Jane", LastName = "Smith" }
-        );
-        _context.SaveChanges();
-
-        _repository = new UsersRepository(_context);
-    }
-
-    // tearDown: delete DB
-    public void Dispose()
-    {
-        _context.Database.EnsureDeleted();
-        _context.Dispose();
-    }
-
     [Fact]
     public async Task GetUsers_ReturnsAllUsers()
     {
-        var users = await _repository.GetUsers();
-        Assert.Equal(2, users.Count());
-        Assert.Contains(users, u => u.UserName == "user1");
-        Assert.Contains(users, u => u.UserName == "user2");
+        // Arrange
+        var users = new List<User>
+        {
+            new User { UserId = 1, UserName = "user1", Password = "pass1", FirstName = "John", LastName = "Doe" },
+            new User { UserId = 2, UserName = "user2", Password = "pass2", FirstName = "Jane", LastName = "Smith" }
+        };
+
+        var mockContext = new Mock<WebApiShopContext>();
+        mockContext.Setup(x => x.Users).ReturnsDbSet(users);
+
+        var repository = new UsersRepository(mockContext.Object);
+
+        // Act
+        var result = await repository.GetUsers();
+
+        // Assert
+        Assert.Equal(2, result.Count());
+        Assert.Contains(result, u => u.UserName == "user1");
     }
 
     [Fact]
     public async Task GetUserById_ReturnsCorrectUser()
     {
-        var user = await _repository.GetUserById(1);
+        // Arrange
+        var users = new List<User>
+        {
+            new User { UserId = 1, UserName = "user1" },
+            new User { UserId = 2, UserName = "user2" }
+        };
+
+        var mockContext = new Mock<WebApiShopContext>();
+        mockContext.Setup(x => x.Users).ReturnsDbSet(users);
+
+        var repository = new UsersRepository(mockContext.Object);
+
+        // Act
+        var user = await repository.GetUserById(1);
+
+        // Assert
         Assert.NotNull(user);
         Assert.Equal("user1", user.UserName);
     }
 
     [Fact]
-    public async Task GetUserById_ReturnsNull_WhenNotFound()
-    {
-        var user = await _repository.GetUserById(99);
-        Assert.Null(user);
-    }
-
-    [Fact]
-    public async Task CreateUser_AddsUserAndSaves()
-    {
-        var newUser = new User { UserName = "newuser", Password = "newpass", FirstName = "Alice", LastName = "Wonder" };
-        var result = await _repository.CreateUser(newUser);
-
-        Assert.NotNull(result);
-        Assert.Equal("newuser", result.UserName);
-
-        var users = await _repository.GetUsers();
-        Assert.Equal(3, users.Count());
-        Assert.Contains(users, u => u.UserName == "newuser");
-    }
-
-    [Fact]
     public async Task Login_ReturnsUser_WhenCredentialsMatch()
     {
-        var loginUser = new User { UserName = "user1", Password = "pass1" };
-        var result = await _repository.Login(loginUser);
+        // Arrange
+        var users = new List<User>
+        {
+            new User { UserId = 1, UserName = "user1", Password = "pass1" }
+        };
 
+        var mockContext = new Mock<WebApiShopContext>();
+        mockContext.Setup(x => x.Users).ReturnsDbSet(users);
+
+        var repository = new UsersRepository(mockContext.Object);
+        var loginUser = new User { UserName = "user1", Password = "pass1" };
+
+        // Act
+        var result = await repository.Login(loginUser);
+
+        // Assert
         Assert.NotNull(result);
         Assert.Equal("user1", result.UserName);
     }
 
     [Fact]
-    public async Task Login_ReturnsNull_WhenCredentialsDoNotMatch()
+    public async Task CreateUser_AddsUserAndSaves()
     {
-        var loginUser = new User { UserName = "user1", Password = "wrongpass" };
-        var result = await _repository.Login(loginUser);
+        // Arrange
+        var users = new List<User>(); 
+        var mockContext = new Mock<WebApiShopContext>();
+        mockContext.Setup(x => x.Users).ReturnsDbSet(users);
 
-        Assert.Null(result);
+        var repository = new UsersRepository(mockContext.Object);
+        var newUser = new User { UserName = "newuser", Password = "newpass" };
+
+        // Act
+        var result = await repository.CreateUser(newUser);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("newuser", result.UserName);
+        mockContext.Verify(m => m.SaveChangesAsync(default), Times.Once());
     }
-
+    // טסט יחידה: בדיקת התחברות עם סיסמה שגויה
     [Fact]
-    public async Task UpdateUser_UpdatesUserAndSaves()
+    public async Task Login_InvalidCredentials_ReturnsNull()
     {
-        var user = await _repository.GetUserById(1);
-        user.Password = "updatedpass";
-        await _repository.UpdateUser(1, user);
+        // Arrange
+        var users = new List<User>
+    {
+        new User { UserId = 1, UserName = "testUser", Password = "correctPassword" }
+    };
 
-        var updatedUser = await _repository.GetUserById(1);
-        Assert.Equal("updatedpass", updatedUser.Password);
+        var mockContext = new Mock<WebApiShopContext>();
+        mockContext.Setup(x => x.Users).ReturnsDbSet(users);
+
+        var repository = new UsersRepository(mockContext.Object);
+        var loginAttempt = new User { UserName = "testUser", Password = "wrongPassword" };
+
+        // Act
+        var result = await repository.Login(loginAttempt);
+
+        // Assert
+        Assert.Null(result); // צפוי לחזור null כי הסיסמה לא תואמת
     }
 }

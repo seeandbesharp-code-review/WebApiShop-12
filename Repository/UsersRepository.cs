@@ -19,7 +19,7 @@ namespace Repository
 
         public async Task<User?> GetUserById(int id)
         {
-            return await _webApiShopContext.Users.FindAsync(id);
+            return await _webApiShopContext.Users.FirstOrDefaultAsync(user => user.UserId == id);
         }
 
         public async Task<User> CreateUser(User user)

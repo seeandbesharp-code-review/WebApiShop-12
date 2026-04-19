@@ -9,7 +9,7 @@ using Entities;
 
 namespace Services
 {
-    internal class AutoMapping: Profile
+    public class AutoMapping: Profile
     {
 
         public AutoMapping()

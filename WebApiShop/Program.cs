@@ -4,7 +4,6 @@ using PresidentsApp.Middlewares;
 using Repository;
 using Services;
 using WebApiShop.MiddleWare;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
