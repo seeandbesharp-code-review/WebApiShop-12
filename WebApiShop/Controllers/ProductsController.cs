@@ -38,30 +38,5 @@ namespace WebApiShop.Controllers
             
         }
 
-        // POST api/<ProductsController>
-        [HttpPost]
-        public async Task<ActionResult<ProductDTO>> Post([FromBody] ProductDTO product)
-        {
-            ProductDTO? _product =  await _productsService.CreateProduct(product);
-            if (_product == null)
-                return BadRequest();
-            return CreatedAtAction(nameof(Get), new { id = _product.ProductId }, _product);
-        }
-
-        // PUT api/<ProductsController>/5
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] ProductDTO product)
-        {
-            try 
-            {
-                await _productsService.UpdateProduct(id, product);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
     }
 }

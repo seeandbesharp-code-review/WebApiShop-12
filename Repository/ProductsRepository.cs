@@ -33,19 +33,6 @@ namespace Repository
         {
             return await _webApiShopContext.Products.FindAsync(id);
         }
-
-        public async Task<Product> CreateProduct(Product product)
-        {
-            await _webApiShopContext.Products.AddAsync(product);
-            await _webApiShopContext.SaveChangesAsync();
-            return product;
-        }
-
-        public async Task UpdateProduct(int id, Product product)
-        {
-            _webApiShopContext.Products.Update(product);
-            await _webApiShopContext.SaveChangesAsync();
-        }
-
+        
     }
 }
