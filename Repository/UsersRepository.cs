@@ -6,7 +6,7 @@ namespace Repository
 {
     public class UsersRepository : IUsersRepository
     {
-        WebApiShopContext _webApiShopContext;
+        readonly WebApiShopContext _webApiShopContext;
 
         public UsersRepository(WebApiShopContext webApiShopContext)
         {

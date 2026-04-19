@@ -15,7 +15,7 @@ namespace WebApiShop.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        IProductsService _productsService;
+        readonly IProductsService _productsService;
         public ProductsController(IProductsService productsService)
         {
             this._productsService = productsService;
@@ -23,7 +23,7 @@ namespace WebApiShop.Controllers
 
         // GET: api/<ProductsController>
         [HttpGet]
-        public async Task<PageResponseDTO> Get([FromQuery] int[] categoryId, [FromQuery] decimal maxPrice, [FromQuery] decimal minPrice, [FromQuery] int position, [FromQuery] int skip, [FromQuery] string desc = "")
+        public async Task<PageResponseDTO> Get([FromQuery] int[] categoryId, [FromQuery] decimal maxPrice, [FromQuery] decimal minPrice, [FromQuery] int position = 1, [FromQuery] int skip = 20, [FromQuery] string desc = "")
         {
             
             return await _productsService.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);

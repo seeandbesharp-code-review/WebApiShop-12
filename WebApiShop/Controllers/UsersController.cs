@@ -15,7 +15,7 @@ namespace WebApiShop.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        IUsersService _usersService;
+        readonly IUsersService _usersService;
         public UsersController(IUsersService usersService)
         {
             this._usersService = usersService;

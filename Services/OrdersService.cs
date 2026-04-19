@@ -16,10 +16,10 @@ namespace Services
             _productsService = productsService;
             _logger = logger;
         }
-        IOrdersRepository _repository;
-        IMapper _mapper;
-        IProductsService _productsService;
-        ILogger<OrdersService> _logger;
+        readonly IOrdersRepository _repository;
+        readonly IMapper _mapper;
+        readonly IProductsService _productsService;
+        readonly ILogger<OrdersService> _logger;
 
         public async Task<IEnumerable<OrderDTO>> GetOrders()
         {

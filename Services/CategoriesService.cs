@@ -13,8 +13,8 @@ namespace Services
             this._repository = repository;
             _mapper = mapper;
         }
-        ICategoriesRepository _repository;
-        IMapper _mapper;
+        readonly ICategoriesRepository _repository;
+        readonly IMapper _mapper;
 
         public async Task<IEnumerable<CategoryDTO>> GetCategories()
         {

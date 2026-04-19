@@ -16,10 +16,10 @@ namespace Services
             _mapper = mapper;
             _logger = logger;
         }
-        IUsersRepository _repository;
-        IPasswordsService passwordsService;
-        IMapper _mapper;
-        ILogger<UsersService> _logger;
+        readonly IUsersRepository _repository;
+        readonly IPasswordsService passwordsService;
+        readonly IMapper _mapper;
+        readonly ILogger<UsersService> _logger;
 
         public async Task<IEnumerable<UserDTO>> GetUsers()
         {

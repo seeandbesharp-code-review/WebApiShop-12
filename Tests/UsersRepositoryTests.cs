@@ -99,7 +99,7 @@ public class UsersRepositoryTests
         Assert.Equal("newuser", result.UserName);
         mockContext.Verify(m => m.SaveChangesAsync(default), Times.Once());
     }
-    // טסט יחידה: בדיקת התחברות עם סיסמה שגויה
+
     [Fact]
     public async Task Login_InvalidCredentials_ReturnsNull()
     {
@@ -119,6 +119,6 @@ public class UsersRepositoryTests
         var result = await repository.Login(loginAttempt);
 
         // Assert
-        Assert.Null(result); // צפוי לחזור null כי הסיסמה לא תואמת
+        Assert.Null(result); 
     }
 }

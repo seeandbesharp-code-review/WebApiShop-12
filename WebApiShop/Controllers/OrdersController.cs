@@ -15,7 +15,7 @@ namespace WebApiShop.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        IOrdersService _ordersService;
+        readonly IOrdersService _ordersService;
         public OrdersController(IOrdersService ordersService)
         {
             this._ordersService = ordersService;

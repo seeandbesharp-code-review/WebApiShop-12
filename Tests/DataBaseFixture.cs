@@ -18,8 +18,8 @@ namespace Tests
             
             // Set up the test database connection and initialize the context
             var options = new DbContextOptionsBuilder<WebApiShopContext>()
-                //"Server=srv2\\pupils;Database=Tests;Trusted_Connection=True;TrustServerCertificate=True;"
-                .UseSqlServer("Server=localhost\\SQLEXPRESS;Database=Tests;Trusted_Connection=True;TrustServerCertificate=True;")
+                //"Server=localhost\\SQLEXPRESS;Database=Tests;Trusted_Connection=True;TrustServerCertificate=True;"
+                .UseSqlServer("Server=srv2\\pupils;Database=Tests_yael;Trusted_Connection=True;TrustServerCertificate=True;")
                 .Options;
             Context = new WebApiShopContext(options);
             Context.Database.EnsureCreated();

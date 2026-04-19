@@ -10,7 +10,7 @@ namespace Repository
 {
     public class RatingRepository: IRatingRepository
     {
-        WebApiShopContext _webApiShopContext;
+        readonly WebApiShopContext _webApiShopContext;
         public RatingRepository(WebApiShopContext webApiShopContext) 
         { 
             _webApiShopContext = webApiShopContext;

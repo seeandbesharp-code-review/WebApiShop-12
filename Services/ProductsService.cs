@@ -13,8 +13,8 @@ namespace Services
             this._repository = repository;
             _mapper = mapper;
         }
-        IProductsRepository _repository;
-        IMapper _mapper;
+        readonly IProductsRepository _repository;
+        readonly IMapper _mapper;
 
         public async Task<PageResponseDTO> GetProducts(int[] categoryId, decimal maxPrice, decimal minPrice, string desc, int position, int skip)
         {
