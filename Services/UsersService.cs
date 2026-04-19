@@ -9,6 +9,11 @@ namespace Services
 {
     public class UsersService : IUsersService
     {
+        readonly IUsersRepository _repository;
+        readonly IPasswordsService passwordsService;
+        readonly IMapper _mapper;
+        readonly ILogger<UsersService> _logger;
+
         public UsersService(IUsersRepository repository, IPasswordsService passwordsService, IMapper mapper, ILogger<UsersService> logger)
         {
             this._repository = repository;
@@ -16,11 +21,7 @@ namespace Services
             _mapper = mapper;
             _logger = logger;
         }
-        readonly IUsersRepository _repository;
-        readonly IPasswordsService passwordsService;
-        readonly IMapper _mapper;
-        readonly ILogger<UsersService> _logger;
-
+        
         public async Task<IEnumerable<UserDTO>> GetUsers()
         {
             IEnumerable<User> users = await _repository.GetUsers();

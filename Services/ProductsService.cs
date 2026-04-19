@@ -8,14 +8,15 @@ namespace Services
 {
     public class ProductsService : IProductsService
     {
+        readonly IProductsRepository _repository;
+        readonly IMapper _mapper;
+
         public ProductsService(IProductsRepository repository, IMapper mapper)
         {
             this._repository = repository;
             _mapper = mapper;
         }
-        readonly IProductsRepository _repository;
-        readonly IMapper _mapper;
-
+        
         public async Task<PageResponseDTO> GetProducts(int[] categoryId, decimal maxPrice, decimal minPrice, string desc, int position, int skip)
         {
             var (products, total) = await _repository.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);

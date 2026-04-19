@@ -8,13 +8,14 @@ namespace Services
 {
     public class CategoriesService : ICategoriesService
     {
+        readonly ICategoriesRepository _repository;
+        readonly IMapper _mapper;
         public CategoriesService(ICategoriesRepository repository, IMapper mapper)
         {
             this._repository = repository;
             _mapper = mapper;
         }
-        readonly ICategoriesRepository _repository;
-        readonly IMapper _mapper;
+        
 
         public async Task<IEnumerable<CategoryDTO>> GetCategories()
         {

@@ -9,6 +9,10 @@ namespace Services
 {
     public class OrdersService : IOrdersService
     {
+        readonly IOrdersRepository _repository;
+        readonly IMapper _mapper;
+        readonly IProductsService _productsService;
+        readonly ILogger<OrdersService> _logger;
         public OrdersService(IOrdersRepository repository, IMapper mapper, IProductsService productsService, ILogger<OrdersService> logger)
         {
             this._repository = repository;
@@ -16,10 +20,7 @@ namespace Services
             _productsService = productsService;
             _logger = logger;
         }
-        readonly IOrdersRepository _repository;
-        readonly IMapper _mapper;
-        readonly IProductsService _productsService;
-        readonly ILogger<OrdersService> _logger;
+        
 
         public async Task<IEnumerable<OrderDTO>> GetOrders()
         {
