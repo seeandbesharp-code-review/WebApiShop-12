@@ -28,7 +28,8 @@ async function register() {
         body: JSON.stringify(data)
     });
     if (!response.ok) {
-        alert("Something went wrong, please try again.");
+        error = await response.text();
+        alert(error);
         return;
     }
     alert("You have successfully registered.")

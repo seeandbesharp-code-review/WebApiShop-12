@@ -41,7 +41,8 @@ async function Update() {
     });
 
     if (!response.ok) {
-        alert("Somesing went wrong.");
+        error = await response.text();
+        alert(error);
         return;
     }
     sessionStorage.setItem('user', JSON.stringify(data));

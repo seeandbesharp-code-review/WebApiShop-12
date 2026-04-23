@@ -45,9 +45,13 @@ namespace WebApiShop.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDTO>> Post([FromBody] UserDTO user)
         {
+            if(! _usersService.IsPasswordStrong(user.Password))
+                return BadRequest("Please insert strong password");
+            if(! await _usersService.UserWithSameEmail(user.UserName, user.UserId))
+                return BadRequest("Email is already in use");
             UserDTO? _user =  await _usersService.CreateUser(user);
             if (_user == null)
-                return BadRequest();
+                return BadRequest("Something went wrong, please try again");
             return CreatedAtAction(nameof(Get), new { id = user.UserId }, user);
         }
 

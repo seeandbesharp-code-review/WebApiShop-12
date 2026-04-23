@@ -40,5 +40,21 @@ namespace Repository
             await _webApiShopContext.SaveChangesAsync();
         }
 
+        public async Task<bool> UserWithSameEmail(string email, int id)
+        {
+            User? userWithSameEmail;
+            if (id < 0)
+            {
+                userWithSameEmail = await _webApiShopContext.Users.FirstOrDefaultAsync(user => user.UserName == email);
+            }
+            else
+            {
+                userWithSameEmail = await _webApiShopContext.Users.FirstOrDefaultAsync(user => user.UserName == email && user.UserId != id);
+            }
+            if (userWithSameEmail == null)
+                return true;
+            return false;
+
+        }
     }
 }
