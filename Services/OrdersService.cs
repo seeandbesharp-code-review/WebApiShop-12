@@ -42,7 +42,7 @@ namespace Services
             return _mapper.Map<Order, OrderDTO>(order1);
         }
 
-        public async Task<int> orderSumValidation(Order order)
+        async Task orderSumValidation(Order order)
         {
             decimal _totalSum = 0;
             foreach (var orderItem in order.OrderItems)
@@ -57,7 +57,6 @@ namespace Services
                 order.OrderSum = _totalSum;
                 _logger.LogWarning("user id:" + order.UserId + "tried to place order with unmatched sum");
             }
-            return 1;
         }
     }
 }
