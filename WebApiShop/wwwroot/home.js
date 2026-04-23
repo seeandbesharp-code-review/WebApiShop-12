@@ -35,6 +35,16 @@ async function register() {
 }
 
 async function login() {
+
+    if (response.status == 204) {
+        alert("UserName or password is wrong, please try again.")
+        return;
+    }
+    if (!response.ok) {
+        alert("Somesing went wrong.");
+        return;
+    }
+
     UserName = document.querySelector('#lusername').value;
     Password = document.querySelector('#lpassword').value;
     const data = {
@@ -49,16 +59,6 @@ async function login() {
         },
         body: JSON.stringify(data)
     });
-
-    if (response.status == 204) {
-        alert("UserName or password is wrong, please try again.")
-        return;
-    }
-    if (!response.ok) {
-        alert("Somesing went wrong.");
-        return;
-    }
-
     const user = await response.json();
     sessionStorage.setItem('user', JSON.stringify(user));
     window.location.href = "src\\update.html";

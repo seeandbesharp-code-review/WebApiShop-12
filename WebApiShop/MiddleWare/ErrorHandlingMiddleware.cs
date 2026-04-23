@@ -8,13 +8,12 @@ namespace PresidentsApp.Middlewares
     public class ErrorHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ErrorHandlingMiddleware> _logger;
         public ErrorHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext, ILogger<ErrorHandlingMiddleware> _logger)
+        public async Task Invoke(HttpContext httpContext, ILogger<ErrorHandlingMiddleware> logger)
         {
             try
             {
@@ -22,7 +21,7 @@ namespace PresidentsApp.Middlewares
             }
             catch(Exception e)
             {
-                _logger.LogError($"Logged From My Middleware {e.Message}  {e.StackTrace}");
+                logger.LogError($"Logged From My Middleware {e.Message}  {e.StackTrace}");
                 httpContext.Response.StatusCode = 500;
                 await httpContext.Response.WriteAsync("Internal Error In Server");
             }

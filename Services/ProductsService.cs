@@ -42,6 +42,18 @@ namespace Services
             Product? product = await _repository.GetProductById(id);
             return _mapper.Map<Product, ProductDTO>(product);
         }
-        
+        public async Task UpdateProduct(int id, ProductDTO Product)
+        {
+            Product Product1 = _mapper.Map<ProductDTO,Product>(Product);
+            await _repository.UpdateProduct(id, Product1);
+        }
+
+        public async Task<ProductDTO?> CreateProduct(ProductDTO Product)
+        {
+            
+            Product product1 = _mapper.Map<ProductDTO, Product>(Product);
+            product1 = await _repository.CreateProduct(product1);
+            return _mapper.Map<Product, ProductDTO>(product1);
+        }
     }
 }
