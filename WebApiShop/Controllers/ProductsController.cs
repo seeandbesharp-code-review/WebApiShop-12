@@ -30,34 +30,50 @@ namespace WebApiShop.Controllers
         [HttpGet]
         public async Task<PageResponseDTO> Get([FromQuery] int[] categoryId, [FromQuery] decimal maxPrice, [FromQuery] decimal minPrice, [FromQuery] int position = 1, [FromQuery] int skip = 20, [FromQuery] string desc = "")
         {
-            string cacheKey = Request.Path + Request.QueryString;
-
-            var cachedData = await _db.StringGetAsync(cacheKey);
-            if (!cachedData.IsNull)
+            try
             {
-                return JsonSerializer.Deserialize<PageResponseDTO>(cachedData);
+                string cacheKey = Request.Path + Request.QueryString;
+
+                var cachedData = await _db.StringGetAsync(cacheKey);
+                if (!cachedData.IsNull)
+                {
+                    return JsonSerializer.Deserialize<PageResponseDTO>(cachedData);
+                }
+                var products = await _productsService.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);
+                var ttlMinutes = _config.GetValue<int>("Redis:DefaultTTLInMinutes", 30);
+                await _db.StringSetAsync(cacheKey, JsonSerializer.Serialize(products), TimeSpan.FromMinutes(ttlMinutes));
+                return products;
             }
-            var products = await _productsService.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);
-            var ttlMinutes = _config.GetValue<int>("Redis:DefaultTTLInMinutes", 30);
-            await _db.StringSetAsync(cacheKey, JsonSerializer.Serialize(products), TimeSpan.FromMinutes(ttlMinutes));
-            return products;
+            catch (Exception ex)
+            {
+                return await _productsService.GetProducts(categoryId, maxPrice, minPrice, desc, position, skip);
+            }
+            
         }
 
         // GET api/<ProductsController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDTO>> Get(int id)
         {
-            string cacheKey = Request.Path;
-            var cachedData = await _db.StringGetAsync(cacheKey);
-            if (!cachedData.IsNull)
+            try 
             {
-                return JsonSerializer.Deserialize<ProductDTO>(cachedData);
+                string cacheKey = Request.Path;
+                var cachedData = await _db.StringGetAsync(cacheKey);
+                if (!cachedData.IsNull)
+                {
+                    return JsonSerializer.Deserialize<ProductDTO>(cachedData);
+                }
+                ProductDTO? product = await _productsService.GetProductById(id);
+                var ttlMinutes = _config.GetValue<int>("Redis:DefaultTTLInMinutes", 30);
+                await _db.StringSetAsync(cacheKey, JsonSerializer.Serialize(product), TimeSpan.FromMinutes(ttlMinutes));
+                return Ok(product);
             }
-            ProductDTO? product = await _productsService.GetProductById(id);
-            var ttlMinutes = _config.GetValue<int>("Redis:DefaultTTLInMinutes", 30);
-            await _db.StringSetAsync(cacheKey, JsonSerializer.Serialize(product), TimeSpan.FromMinutes(ttlMinutes));
-            return Ok(product);
-            
+            catch (Exception e)
+            {
+                return await _productsService.GetProductById(id);
+            }
+
+
         }
         // POST api/<ProductsController>
         [HttpPost]
@@ -66,7 +82,11 @@ namespace WebApiShop.Controllers
             ProductDTO? _product =  await _productsService.CreateProduct(product);
             if (_product == null)
                 return BadRequest();
-            await ClearProductsCache();
+            try
+            {
+                await ClearProductsCache();
+            }
+            catch (Exception ex) { }
             return CreatedAtAction(nameof(Get), new { id = _product.ProductId }, _product);
         }
 
@@ -77,8 +97,12 @@ namespace WebApiShop.Controllers
             try 
             {
                 await _productsService.UpdateProduct(id, product);
-                await _db.KeyDeleteAsync($"{Request.Path}");
-                await ClearProductsCache();
+                try 
+                {
+                    await _db.KeyDeleteAsync($"{Request.Path}");
+                    await ClearProductsCache();
+                }
+                catch(Exception ex) { }
                 return Ok();
             }
             catch (Exception e)
