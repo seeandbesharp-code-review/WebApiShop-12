@@ -23,9 +23,16 @@ builder.Services.AddScoped<IRatingService, RatingService>();
 builder.Host.UseNLog();
 builder.Services.AddDbContext<WebApiShopContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("Home")));
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-    ConnectionMultiplexer.Connect(builder.Configuration.GetSection("Redis:ConnectionString").Value));
+var redisCs = builder.Configuration.GetSection("Redis:ConnectionString").Value
+    ?? throw new InvalidOperationException("Redis:ConnectionString is not configured. Add it to appsettings or User Secrets.");
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisCs));
 
+// TODO: Add JWT authentication — AddAuthentication not configured.
+// Add the following before AddControllers():
+//   builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//       .AddJwtBearer(options => { ... });
+// and app.UseAuthentication() before app.UseAuthorization() in the pipeline.
+// Rule B3 — Critical: without this, [Authorize] attributes are not enforced.
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
