@@ -58,7 +58,7 @@ public class UsersRepositoryTests
     }
 
     [Fact]
-    public async Task Login_ReturnsUser_WhenCredentialsMatch()
+    public async Task GetByUserName_ReturnsUser_WhenUserNameExists()
     {
         // Arrange
         var users = new List<User>
@@ -70,10 +70,9 @@ public class UsersRepositoryTests
         mockContext.Setup(x => x.Users).ReturnsDbSet(users);
 
         var repository = new UsersRepository(mockContext.Object);
-        var loginUser = new User { UserName = "user1", Password = "pass1" };
 
         // Act
-        var result = await repository.Login(loginUser);
+        var result = await repository.GetByUserName("user1");
 
         // Assert
         Assert.NotNull(result);
@@ -101,7 +100,7 @@ public class UsersRepositoryTests
     }
 
     [Fact]
-    public async Task Login_InvalidCredentials_ReturnsNull()
+    public async Task GetByUserName_ReturnsNull_WhenUserNameDoesNotExist()
     {
         // Arrange
         var users = new List<User>
@@ -113,12 +112,11 @@ public class UsersRepositoryTests
         mockContext.Setup(x => x.Users).ReturnsDbSet(users);
 
         var repository = new UsersRepository(mockContext.Object);
-        var loginAttempt = new User { UserName = "testUser", Password = "wrongPassword" };
 
         // Act
-        var result = await repository.Login(loginAttempt);
+        var result = await repository.GetByUserName("unknownUser");
 
         // Assert
-        Assert.Null(result); 
+        Assert.Null(result);
     }
 }

@@ -40,15 +40,17 @@ namespace Services
             //if (Level < 3)
             //    return null;
             User user1 = _mapper.Map<UserDTO, User>(user);
+            user1.Password = BCrypt.Net.BCrypt.HashPassword(user1.Password);
             user1 = await _repository.CreateUser(user1);
             return _mapper.Map<User, UserDTO>(user1);
         }
         public async Task<UserDTO?> Login(LoginUserDTO loggedUser)
         {
-            User? user = _mapper.Map<LoginUserDTO, User>(loggedUser);
-            user = await _repository.Login(user);
-            _logger.LogInformation($"Login attempted with UserName {user?.UserName} and password {user?.Password}");
-            return _mapper.Map<User,UserDTO>(user);
+            _logger.LogInformation($"Login attempted with UserName {loggedUser.UserName}");
+            User? user = await _repository.GetByUserName(loggedUser.UserName);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loggedUser.Password, user.Password))
+                return null;
+            return _mapper.Map<User, UserDTO>(user);
         }
         public async Task UpdateUser(int id, UserDTO user)
         {
@@ -58,6 +60,7 @@ namespace Services
             if(!await UserWithSameEmail(user.UserName, user.UserId))
                 throw new("Email is already in use");
             User user1 = _mapper.Map<UserDTO,User>(user);
+            user1.Password = BCrypt.Net.BCrypt.HashPassword(user1.Password);
             await _repository.UpdateUser(id, user1);
         }
 
