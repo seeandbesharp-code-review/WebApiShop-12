@@ -18,6 +18,7 @@ namespace Tests
         private readonly Mock<IMapper> _mockMapper;
         private readonly Mock<IProductsService> _mockProductsService;
         private readonly Mock<ILogger<OrdersService>> _mockLogger;
+        private readonly Mock<IKafkaProducerService> _mockKafkaProducer;
         private readonly OrdersService _ordersService;
 
         public OrdersServiceTests()
@@ -26,12 +27,14 @@ namespace Tests
             _mockMapper = new Mock<IMapper>();
             _mockProductsService = new Mock<IProductsService>();
             _mockLogger = new Mock<ILogger<OrdersService>>();
+            _mockKafkaProducer = new Mock<IKafkaProducerService>();
 
             _ordersService = new OrdersService(
                 _mockRepository.Object,
                 _mockMapper.Object,
                 _mockProductsService.Object,
-                _mockLogger.Object
+                _mockLogger.Object,
+                _mockKafkaProducer.Object
             );
         }
 
