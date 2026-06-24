@@ -34,6 +34,14 @@ namespace Repository
             return await _webApiShopContext.Users.FirstOrDefaultAsync(user => user.UserName == userName);
         }
 
+        public async Task<string?> GetUserRole(int id)
+        {
+            return await _webApiShopContext.Users
+                .Where(user => user.UserId == id)
+                .Select(user => user.Role)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task UpdateUser(int id, User loggedUser)
         {
             _webApiShopContext.Users.Update(loggedUser);

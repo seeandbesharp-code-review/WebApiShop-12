@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics.Metrics;
 using System.Text.Json;
 using Services;
 using Entities;
 using System.Threading.Tasks;
 using DTOs;
+using WebApiShop.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,14 +24,16 @@ namespace WebApiShop.Controllers
         }
 
         // GET: api/<UsersController>
+        [AuthorizeRole(Roles.Admin)]
         [HttpGet]
         public async Task<IEnumerable<UserDTO>> Get()
         {
-            
+
             return await _usersService.GetUsers();
         }
 
         // GET api/<UsersController>/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDTO>> Get(int id)
         {
@@ -42,6 +46,7 @@ namespace WebApiShop.Controllers
         }
 
         // POST api/<UsersController>
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<UserDTO>> Post([FromBody] UserDTO user)
         {
@@ -49,22 +54,28 @@ namespace WebApiShop.Controllers
                 return BadRequest("Please insert strong password");
             if(! await _usersService.UserWithSameEmail(user.UserName, user.UserId))
                 return BadRequest("Email is already in use");
-            UserDTO? _user =  await _usersService.CreateUser(user);
-            if (_user == null)
+            AuthResultDTO? result =  await _usersService.CreateUser(user);
+            if (result == null)
                 return BadRequest("Something went wrong, please try again");
-            return CreatedAtAction(nameof(Get), new { id = user.UserId }, user);
+            SetTokenCookie(result.Token);
+            return CreatedAtAction(nameof(Get), new { id = result.User.UserId }, result.User);
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Post1([FromBody] LoginUserDTO loggedUser)
         {
-            UserDTO? user = await _usersService.Login(loggedUser);
-            if (user != null)
-                return CreatedAtAction(nameof(Get), new { user.UserId }, user);
+            AuthResultDTO? result = await _usersService.Login(loggedUser);
+            if (result != null)
+            {
+                SetTokenCookie(result.Token);
+                return CreatedAtAction(nameof(Get), new { result.User.UserId }, result.User);
+            }
             return NoContent();
         }
 
         // PUT api/<UsersController>/5
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] UserDTO user)
         {
@@ -79,6 +90,15 @@ namespace WebApiShop.Controllers
             }
         }
 
-        
+        private void SetTokenCookie(string token)
+        {
+            Response.Cookies.Append("jwt", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
+            });
+        }
     }
 }

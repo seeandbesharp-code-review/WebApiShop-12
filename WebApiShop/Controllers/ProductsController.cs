@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics.Metrics;
 using System.Text.Json;
 using Services;
@@ -6,6 +7,7 @@ using Entities;
 using System.Threading.Tasks;
 using DTOs;
 using StackExchange.Redis;
+using WebApiShop.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -76,6 +78,7 @@ namespace WebApiShop.Controllers
 
         }
         // POST api/<ProductsController>
+        [AuthorizeRole(Roles.Admin)]
         [HttpPost]
         public async Task<ActionResult<ProductDTO>> Post([FromBody] ProductDTO product)
         {
@@ -91,6 +94,7 @@ namespace WebApiShop.Controllers
         }
 
         // PUT api/<ProductsController>/5
+        [AuthorizeRole(Roles.Admin)]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] ProductDTO product)
         {

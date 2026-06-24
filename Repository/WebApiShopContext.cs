@@ -133,6 +133,11 @@ public partial class WebApiShopContext : DbContext
                 .IsRequired()
                 .IsUnicode(false)
                 .HasColumnName("USER_NAME");
+            entity.Property(e => e.Role)
+                .IsRequired()
+                .IsUnicode(false)
+                .HasDefaultValue("User")
+                .HasColumnName("ROLE");
         });
 
         modelBuilder.Entity<Rating>(entity =>

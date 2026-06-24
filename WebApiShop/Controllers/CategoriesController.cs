@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics.Metrics;
 using System.Text.Json;
 using Services;
 using Entities;
 using System.Threading.Tasks;
 using DTOs;
+using WebApiShop.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -41,6 +43,7 @@ namespace WebApiShop.Controllers
         }
 
         // POST api/<CategorysController>
+        [AuthorizeRole(Roles.Admin)]
         [HttpPost]
         public async Task<ActionResult<CategoryDTO>> Post([FromBody] CategoryDTO category)
         {

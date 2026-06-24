@@ -13,13 +13,15 @@ namespace Services
         readonly IPasswordsService _passwordsService;
         readonly IMapper _mapper;
         readonly ILogger<UsersService> _logger;
+        readonly ITokenService _tokenService;
 
-        public UsersService(IUsersRepository repository, IPasswordsService passwordsService, IMapper mapper, ILogger<UsersService> logger)
+        public UsersService(IUsersRepository repository, IPasswordsService passwordsService, IMapper mapper, ILogger<UsersService> logger, ITokenService tokenService)
         {
             this._repository = repository;
             this._passwordsService = passwordsService;
             _mapper = mapper;
             _logger = logger;
+            _tokenService = tokenService;
         }
         
         public async Task<IEnumerable<UserDTO>> GetUsers()
@@ -34,23 +36,26 @@ namespace Services
             return _mapper.Map<User, UserDTO>(user);
         }
 
-        public async Task<UserDTO?> CreateUser(UserDTO user)
+        public async Task<AuthResultDTO?> CreateUser(UserDTO user)
         {
             //int Level = _passwordsService.passwordValidation(user.Password);
             //if (Level < 3)
             //    return null;
             User user1 = _mapper.Map<UserDTO, User>(user);
             user1.Password = BCrypt.Net.BCrypt.HashPassword(user1.Password);
+            user1.Role = "User";
             user1 = await _repository.CreateUser(user1);
-            return _mapper.Map<User, UserDTO>(user1);
+            UserDTO createdUser = _mapper.Map<User, UserDTO>(user1);
+            return new AuthResultDTO(createdUser, _tokenService.CreateToken(createdUser));
         }
-        public async Task<UserDTO?> Login(LoginUserDTO loggedUser)
+        public async Task<AuthResultDTO?> Login(LoginUserDTO loggedUser)
         {
             _logger.LogInformation($"Login attempted with UserName {loggedUser.UserName}");
             User? user = await _repository.GetByUserName(loggedUser.UserName);
             if (user == null || !BCrypt.Net.BCrypt.Verify(loggedUser.Password, user.Password))
                 return null;
-            return _mapper.Map<User, UserDTO>(user);
+            UserDTO userDto = _mapper.Map<User, UserDTO>(user);
+            return new AuthResultDTO(userDto, _tokenService.CreateToken(userDto));
         }
         public async Task UpdateUser(int id, UserDTO user)
         {
@@ -61,6 +66,7 @@ namespace Services
                 throw new("Email is already in use");
             User user1 = _mapper.Map<UserDTO,User>(user);
             user1.Password = BCrypt.Net.BCrypt.HashPassword(user1.Password);
+            user1.Role = await _repository.GetUserRole(id) ?? "User";
             await _repository.UpdateUser(id, user1);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics.Metrics;
 using System.Text.Json;
 using Services;
@@ -13,6 +14,7 @@ namespace WebApiShop.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         readonly IOrdersService _ordersService;
