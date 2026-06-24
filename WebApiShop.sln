@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTOs", "DTOs\DTOs.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{3D860B08-29C0-4D2E-9A70-A98086579973}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillingServiceConsumer", "BillingServiceConsumer\BillingServiceConsumer.csproj", "{20715295-2154-4CC1-8FCE-06D3D71BA4AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{3D860B08-29C0-4D2E-9A70-A98086579973}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D860B08-29C0-4D2E-9A70-A98086579973}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D860B08-29C0-4D2E-9A70-A98086579973}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20715295-2154-4CC1-8FCE-06D3D71BA4AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20715295-2154-4CC1-8FCE-06D3D71BA4AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20715295-2154-4CC1-8FCE-06D3D71BA4AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20715295-2154-4CC1-8FCE-06D3D71BA4AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
