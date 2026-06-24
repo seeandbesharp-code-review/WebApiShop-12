@@ -1,6 +1,34 @@
 ﻿
+// Client-side retry mechanism: retries transient failures (network errors,
+// 429 rate limiting and 5xx) with exponential backoff.
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchWithRetry(url, options = {}, retries = 3, backoff = 500) {
+    for (let attempt = 0; ; attempt++) {
+        try {
+            const response = await fetch(url, options);
+            const isTransient = response.status === 429 || response.status >= 500;
+            if (isTransient && attempt < retries) {
+                const retryAfter = parseInt(response.headers.get("Retry-After"), 10);
+                const wait = Number.isNaN(retryAfter) ? backoff * Math.pow(2, attempt) : retryAfter * 1000;
+                await delay(wait);
+                continue;
+            }
+            return response;
+        } catch (err) {
+            if (attempt < retries) {
+                await delay(backoff * Math.pow(2, attempt));
+                continue;
+            }
+            throw err;
+        }
+    }
+}
+
 async function getInfo() {
-    const response = await fetch("api/Users");
+    const response = await fetchWithRetry("api/Users");
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -20,7 +48,7 @@ async function register() {
         FirstName,
         LastName 
     };  
-    const response = await fetch("api/Users", {
+    const response = await fetchWithRetry("api/Users", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -53,7 +81,7 @@ async function login() {
         Password
     };  
 
-    const response = await fetch("api/Users/login", {
+    const response = await fetchWithRetry("api/Users/login", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -74,7 +102,7 @@ function reg() {
 
 async function checkPassword() {
     data = document.querySelector('#password').value;
-    const response = await fetch("api/Passwords", {
+    const response = await fetchWithRetry("api/Passwords", {
         method : 'POST',
         headers: {
             "Content-Type": 'application/json'
