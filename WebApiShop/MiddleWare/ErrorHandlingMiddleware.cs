@@ -23,7 +23,14 @@ namespace PresidentsApp.Middlewares
             {
                 logger.LogError($"Logged From My Middleware {e.Message}  {e.StackTrace}");
                 httpContext.Response.StatusCode = 500;
-                await httpContext.Response.WriteAsync("Internal Error In Server");
+                httpContext.Response.ContentType = "application/json";
+                await httpContext.Response.WriteAsync(
+                    System.Text.Json.JsonSerializer.Serialize(new
+                    {
+                        type   = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                        title  = "An unexpected error occurred.",
+                        status = 500
+                    }));
             }
 
         }
