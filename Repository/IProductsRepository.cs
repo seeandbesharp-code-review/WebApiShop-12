@@ -7,6 +7,7 @@ namespace Repository
         Task<Product?> GetProductById(int id);
         Task<Product> CreateProduct(Product Product);
         Task UpdateProduct(int id, Product Product);
+        Task<IEnumerable<Product>> GetFeaturedProducts(int count = 5);
 
     }
 }

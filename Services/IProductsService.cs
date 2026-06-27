@@ -9,5 +9,6 @@ namespace Services
         Task<ProductDTO?> GetProductById(int id);
         Task UpdateProduct(int id, ProductDTO product);
         Task<ProductDTO?> CreateProduct(ProductDTO product);
+        Task<IEnumerable<ProductDTO>> GetFeaturedProducts(int count = 5);
     }
 }

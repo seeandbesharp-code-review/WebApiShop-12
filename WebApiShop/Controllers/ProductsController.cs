@@ -135,5 +135,29 @@ namespace WebApiShop.Controllers
                 }
             }
         }
+
+        // GET: api/<ProductsController>/featured
+        [HttpGet("featured")]
+        public async Task<IEnumerable<ProductDTO>> GetFeatured([FromQuery] int count = 5)
+        {
+            try
+            {
+                string cacheKey = Request.Path + Request.QueryString;
+                var cachedData = await _db.StringGetAsync(cacheKey);
+                if (!cachedData.IsNull)
+                {
+                    return JsonSerializer.Deserialize<IEnumerable<ProductDTO>>(cachedData);
+                }
+
+                var featuredProducts = await _productsService.GetFeaturedProducts(count);
+                var ttlMinutes = _config.GetValue<int>("Redis:DefaultTTLInMinutes", 30);
+                await _db.StringSetAsync(cacheKey, JsonSerializer.Serialize(featuredProducts), TimeSpan.FromMinutes(ttlMinutes));
+                return featuredProducts;
+            }
+            catch (Exception ex)
+            {
+                return await _productsService.GetFeaturedProducts(count);
+            }
+        }
     }
 }

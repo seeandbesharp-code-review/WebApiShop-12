@@ -46,5 +46,14 @@ namespace Repository
             return product;
         }
 
+        public async Task<IEnumerable<Product>> GetFeaturedProducts(int count = 5)
+        {
+            return await _webApiShopContext.Products
+                .OrderByDescending(p => p.Price)
+                .Take(count)
+                .Include(p => p.Category)
+                .ToListAsync();
+        }
+
     }
 }

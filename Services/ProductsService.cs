@@ -55,5 +55,11 @@ namespace Services
             product1 = await _repository.CreateProduct(product1);
             return _mapper.Map<Product, ProductDTO>(product1);
         }
+
+        public async Task<IEnumerable<ProductDTO>> GetFeaturedProducts(int count = 5)
+        {
+            var products = await _repository.GetFeaturedProducts(count);
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(products);
+        }
     }
 }
